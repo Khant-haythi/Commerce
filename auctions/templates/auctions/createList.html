@@ -1,0 +1,63 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+
+  Create Listing
+
+{% endblock %}
+
+
+{% block body %}
+
+  <div class="container mb-3">
+
+    <h1>Create Listing</h1>
+    <br>
+
+     
+    <form method="post" action="{% url 'create_list' %}">
+
+      {% csrf_token %}
+  
+      <div class="mb-3">
+        <label for="title" class="form-label">Title:</label>
+        <input type="text" class="form-control" id="title" name="title" required>
+      </div>
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" rows="3" name="description"></textarea>
+      </div>
+      <div class="mb-3">
+        <label for="starting_bid"> Starting Bid:</label>
+        <div class="input-group mb-3">
+          <span class="input-group-text">$</span>
+          <input type="number" class="form-control" id="starting_bid" name="starting_bid" required>
+        </div>   
+      </div>
+      <div class="mb-3">
+        <label for="image_url">Image URL:</label>
+        <input type="url" class="form-control" id="image_url" name="image_url">
+      </div>
+      <div class="mb-3">
+        <label for="category">Category</label>
+        <select class="form-select" id="category" name="category">
+  
+          <option selected>Please select Category</option>
+  
+          {% for category in categories %}
+  
+            <option value="{{ category.id }}">{{ category.name }}</option>
+  
+          {% endfor %}
+          
+        </select>
+  
+      </div>
+
+
+
+    <button type="submit" class="btn btn-primary">Create Listing</button>
+
+    </form>
+    
+{% endblock %}
