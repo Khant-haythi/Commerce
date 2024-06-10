@@ -28,9 +28,22 @@ class Bid(models.Model):
     bid_amount = models.DecimalField(max_digits=10, decimal_places=2)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     listing = models.ForeignKey(AuctionListing, on_delete=models.CASCADE)
+    created_at = models.DateTimeField()
+    def __str__(self):
 
+        return f"{self.created_by.username} -> {self.bid_amount}"
+    
 class Comment(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     listing = models.ForeignKey(AuctionListing, on_delete=models.CASCADE)
     comment= models.TextField()
+
+class Watchlist(models.Model):
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="watchlist")
+    listing = models.ForeignKey(AuctionListing, on_delete=models.CASCADE, related_name="watchers")
+
+    class Meta:
+
+        unique_together = ("user", "listing")

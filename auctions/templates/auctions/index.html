@@ -3,7 +3,7 @@
 {% block body %}
 <div class="container float-left">
 
-    <h1 class="my-3">Active Listings</h1>
+    <h3 class="my-3">Active Listings</h3>
 
     {% if listings %}
 
@@ -20,9 +20,9 @@
                 {% if listing.image_url %}
 
                   <div class="col-md-4">
-
-                    <img src="{{ listing.image_url }}" class="img-thumbnail" alt="{{ listing.title }}" >
-
+                    <a href="{% url 'listing_page' pk=listing.pk %}">
+                      <img src="{{ listing.image_url }}" class="img-fluid py-3 px-4" alt="{{ listing.title }}" >
+                    </a>
                   </div>
 
                 {% endif %}

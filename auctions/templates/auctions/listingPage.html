@@ -1,0 +1,132 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+
+  Listing Page
+
+{% endblock %}
+
+{% block body %}
+
+  <div class="container float-left">
+
+    {% if error %}
+
+    <div class="alert alert-danger">{{ error }}</div>
+
+    {% endif %}
+
+    <h3 class="my-3">{{ listing.title }}</h3>
+
+    <div class="row">
+
+      <div class="col-md-4">
+
+        {% if listing.image_url %}
+
+          <a href="{% url 'listing_page' listing.pk %}">
+
+            <img src="{{ listing.image_url }}" class="img-fluid py-3 px-4" alt="{{ listing.title }}" >
+
+          </a>
+
+        {% endif %}
+
+      </div>
+
+      <div class="col-md-8">
+
+        <div class="card-body">
+
+          <p class="card-text">{{ listing.description }}</p>
+
+          <p class="card-text">Current Price: ${{ listing.starting_bid }}</p>
+
+          <p class="card-text"><small class="text-muted">Created at {{ listing.created_date }}</small></p>
+
+          
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    {% if user.is_authenticated %}
+
+      <div class="row">
+
+        <div class="col-md-4">
+
+          {% if is_watching %}
+
+          <!-- user is a watcher -->
+
+              <a href="{% url 'remove_from_watchlist' listing.pk %}" class="btn btn-warning">Remove from Watchlist</a>
+
+            {% else %}
+
+              <a href="{% url 'add_to_watchlist' listing.pk %}" class="btn btn-warning">Add to Watchlist</a>
+
+            {% endif %}
+
+          <form action="{% url 'place_bid' listing.pk %}" method="post">
+
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <div class="input-group mb-3">
+                <span class="input-group-text">$</span>
+                <input type="number" class="form-control" id="bid" name="bid" placeholder="Write Your Bid" required>
+              </div>   
+            </div>
+
+            <button type="submit" class="btn btn-primary">Place Bid</button>
+          </br> </br>
+            <div class="mb-3">
+              <textarea class="form-control" id="comment" rows="3" name="comment" placeholder="Comment section"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Comment</button>
+
+        
+          </form>
+
+        </div>
+      </div>
+
+      {% if user == listing.creator %}
+
+        <a href="{% url 'close_auction' listing.pk %}" class="btn btn-danger">Close Auction</a>
+
+      {% endif %}
+
+
+      {% if listing.closed and user == listing.winner %}
+
+        <p>Congratulations, you won this auction!</p>
+
+      {% endif %}
+
+
+      <h4>Comments:</h4>
+
+      <ul>
+
+        {% for comment in listing.comments.all %}
+
+          <li>{{ comment.text }} (by {{ comment.author }})</li>
+
+        {% endfor %}
+
+      </ul>
+
+
+      
+
+    {% endif %}
+
+  </div>
+
+{% endblock %}
