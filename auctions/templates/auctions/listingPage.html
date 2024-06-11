@@ -40,11 +40,11 @@
 
           <p class="card-text">{{ listing.description }}</p>
 
-          <p class="card-text">Current Price: ${{ listing.starting_bid }}</p>
+          <p class="card-text">Starting Bid: ${{ listing.starting_bid }}</p>
+
+          <p class="card-text">Last Bider: {{ latest_bid.created_by }}</p>
 
           <p class="card-text"><small class="text-muted">Created at {{ listing.created_date }}</small></p>
-
-          
 
         </div>
 

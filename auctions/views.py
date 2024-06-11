@@ -154,47 +154,35 @@ def remove_from_watchlist(request, pk):
 
     return redirect("listing_page", pk=pk)
 
-
 @login_required
-
 def place_bid(request, pk):
 
     listing = AuctionListing.objects.get(pk=pk)
 
-
     if request.method == "POST":
 
-        if 'bid' in request.POST:
-            bid = float(request.POST['bid']) 
+        bid = int(request.POST["bid"])
 
-            userbid = Bid(bid_amount=bid, listing=listing, created_by =request.user,created_at=datetime.now())  
+        userbid = Bid(bid_amount=bid, listing=listing, created_by =request.user,created_at=datetime.now())  
 
-            latest_bid = Bid.objects.filter(listing=listing).order_by('-created_at').first()
+        if bid > listing.starting_bid:
 
-            if latest_bid:
+            listing.starting_bid = bid
 
-                latest_bid_amount = latest_bid.bid_amount
+            listing.save()
+            userbid.save()
+            latest_bid = Bid.objects.filter(listing=listing).latest('created_at')
+            return HttpResponseRedirect(reverse("listing_page", args=[pk]))
 
-            else:
-
-                latest_bid_amount = 0  # or some default value
-
-            if userbid.bid_amount >= listing.starting_bid and (not Bid.objects.filter(listing=listing).exists() or userbid.bid_amount > latest_bid.bid_amount):
-
-                userbid.save()
-
-                return redirect("listing_page", pk=pk)
-
-            else:
-
-                return render(request, "auctions/listingPage.html", {"error": "Invalid bid"})
         else:
 
-            return render(request, "auctions/listingPage.html", {"error": "No bid provided"})
+            return render(request, "auctions/listingPage.html", {"listing": listing, "error": "Invalid bid : The bid must be at least as large as the starting bid"})
 
     else:
 
-        return redirect('listing_page', pk=pk)
+        latest_bid = Bid.objects.filter(listing=listing).latest('created_at')
+
+        return render(request, "auctions/listingPage.html", {"listing": listing, "latest_bid": latest_bid})
     
 @login_required
 
