@@ -40,9 +40,11 @@
 
           <p class="card-text">{{ listing.description }}</p>
 
-          <p class="card-text">Starting Bid: ${{ listing.starting_bid }}</p>
+          <p class="card-text"> <strong>Creator : </strong>{{ listing.created_by }} </p>
 
-          <p class="card-text">Last Bider: {{ latest_bid.created_by }}</p>
+          <p class="card-text"> <strong>Starting Bid:</strong> ${{ listing.starting_bid }}</p>
+
+          <p class="card-text"><strong>Last Bider: </strong>{{ latest_bid.created_by }}</p>
 
           <p class="card-text"><small class="text-muted">Created at {{ listing.created_date }}</small></p>
 
@@ -96,7 +98,7 @@
         </div>
       </div>
 
-      {% if user == listing.creator %}
+      {% if listing.user == listing.created_by %}
 
         <a href="{% url 'close_auction' listing.pk %}" class="btn btn-danger">Close Auction</a>
 

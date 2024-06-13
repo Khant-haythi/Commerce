@@ -97,6 +97,10 @@ def listing_page(request, pk):
 
     comments = Comment.objects.all()
 
+    bids = Bid.objects.filter(listing=listing)
+
+    latest_bid = bids.latest('created_at') if bids else None
+
     is_watching = False
 
     if request.user.is_authenticated:
@@ -112,6 +116,8 @@ def listing_page(request, pk):
         "comments": comments,
 
         "is_watching": is_watching,
+
+        "latest_bid": latest_bid
 
     })
 
@@ -190,7 +196,7 @@ def close_auction(request, pk):
 
     listing = AuctionListing.objects.get(pk=pk)
 
-    if listing.user == request.user:
+    if listing.created_by == request.user:
 
         listing.active = False
 
