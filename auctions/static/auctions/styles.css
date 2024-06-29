@@ -1,3 +1,48 @@
 body {
     padding: 10px;
 }
+
+.comments {
+
+    margin-bottom: 20px;
+
+}
+
+
+.comments ul {
+
+    list-style: none;
+
+    padding: 0;
+
+}
+
+
+.comments li {
+
+    padding: 10px;
+
+    border-bottom: 1px solid #ccc;
+
+}
+
+
+.comments li:last-child {
+
+    border-bottom: none;
+
+}
+
+
+.comments strong {
+
+    color: #337ab7;
+
+}
+
+
+.comments small {
+
+    color: #666;
+
+}

@@ -18,6 +18,19 @@
 
     <h3 class="my-3">{{ listing.title }}</h3>
 
+    {% if user.is_authenticated  %}
+
+          <!-- user is a watcher -->
+
+      <a href="{% url 'remove_from_watchlist' listing.pk %}" class="btn btn-warning">Remove from Watchlist</a>
+
+    {% else %}
+
+      <a href="{% url 'add_to_watchlist' listing.pk %}" class="btn btn-warning">Add to Watchlist</a>
+
+    {% endif %}
+        </br> 
+
     <div class="row">
 
       <div class="col-md-4">
@@ -40,13 +53,36 @@
 
           <p class="card-text">{{ listing.description }}</p>
 
-          <p class="card-text"> <strong>Creator : </strong>{{ listing.created_by }} </p>
+          <button class="text-dark" data-bs-toggle="collapse" href="#detailCollapse" role="button" aria-expanded="false" aria-controls="detailCollapse">
 
-          <p class="card-text"> <strong>Starting Bid:</strong> ${{ listing.starting_bid }}</p>
+            Details >
 
-          <p class="card-text"><strong>Last Bider: </strong>{{ latest_bid.created_by }}</p>
+          </button>
+
+            <div class="collapse" id="detailCollapse">
+              <div class="card-body">
+
+                <p class="card-text"> <strong>Creator : </strong>{{ listing.created_by }} </p>
+
+                <p class="card-text"> <strong>Starting Bid:</strong> ${{ listing.starting_bid }}</p>
+
+                <p class="card-text"><strong>Last Bider: </strong>{{ latest_bid.created_by }}</p>
+
+              </div>
+            </div>
+          
+
+          {% if listing.active == False %}
+
+
+          <p class="card-text"><strong>Auction closed. Winner: </strong> {{ listing.winner }}</p>
+  
+  
+          {% endif %}
 
           <p class="card-text"><small class="text-muted">Created at {{ listing.created_date }}</small></p>
+
+          
 
         </div>
 
@@ -54,75 +90,86 @@
 
     </div>
 
+      {% if listing.created_by == user %}
 
-    {% if user.is_authenticated %}
+
+        <a href="{% url 'close_auction' listing.pk %}" class="btn btn-danger">Close Auction</a>
+  
+  
+      {% endif %}
+  
+
+    {% if user.is_authenticated and user != listing.created_by %}
 
       <div class="row">
 
         <div class="col-md-4">
 
-          {% if is_watching %}
-
-          <!-- user is a watcher -->
-
-              <a href="{% url 'remove_from_watchlist' listing.pk %}" class="btn btn-warning">Remove from Watchlist</a>
-
-            {% else %}
-
-              <a href="{% url 'add_to_watchlist' listing.pk %}" class="btn btn-warning">Add to Watchlist</a>
-
-            {% endif %}
+          
 
           <form action="{% url 'place_bid' listing.pk %}" method="post">
 
             {% csrf_token %}
+            {% if listing.active != False %}
+    
+              <div class="mb-3">
+                <div class="input-group mb-3">
+                  <span class="input-group-text">$</span>
+                  <input type="number" class="form-control" id="bid" name="bid" placeholder="Write Your Bid" required>
+                </div>   
+              </div>
+              <button type="submit" class="btn btn-primary">Place Bid</button>
+              </br> </br>
+            {% endif %}
+          </form>
 
-            <div class="mb-3">
-              <div class="input-group mb-3">
-                <span class="input-group-text">$</span>
-                <input type="number" class="form-control" id="bid" name="bid" placeholder="Write Your Bid" required>
-              </div>   
-            </div>
-
-            <button type="submit" class="btn btn-primary">Place Bid</button>
-          </br> </br>
+          <form action="{% url 'add_comment' listing.pk %}" method="post">
+            {% csrf_token %}
             <div class="mb-3">
               <textarea class="form-control" id="comment" rows="3" name="comment" placeholder="Comment section"></textarea>
             </div>
 
-            <button type="submit" class="btn btn-primary">Add Comment</button>
+            <button type="submit" class="btn btn-primary">Post Comment</button>
 
         
           </form>
 
         </div>
       </div>
+    </br>
+      <div class="comments">
 
-      {% if listing.user == listing.created_by %}
+        <a class="text-dark text-decoration-none" data-bs-toggle="collapse" href="#detailCollapse2" role="button" aria-expanded="false" aria-controls="detailCollapse">
+          <h4>Comments ></h4>
+        </a>
+        <div class="collapse" id="detailCollapse2">
+          <div class="card-body">
 
-        <a href="{% url 'close_auction' listing.pk %}" class="btn btn-danger">Close Auction</a>
-
-      {% endif %}
-
-
-      {% if listing.closed and user == listing.winner %}
-
-        <p>Congratulations, you won this auction!</p>
-
-      {% endif %}
-
-
-      <h4>Comments:</h4>
-
-      <ul>
-
-        {% for comment in listing.comments.all %}
-
-          <li>{{ comment.text }} (by {{ comment.author }})</li>
-
-        {% endfor %}
-
-      </ul>
+            <ul>
+    
+              {% for comment in listing.comments.all %}
+    
+                  <li class="list-group-item">
+    
+                      <strong>{{ comment.user.username }}</strong>
+    
+                      <p>{{ comment.comment }}</p>
+    
+                      <small>{{ comment.created_at }}</small>
+    
+                  </li>
+    
+              {% empty %}
+    
+                  <li class="list-group-item">No comments yet.</li>
+    
+              {% endfor %}
+    
+            </ul>
+          </div>
+        </div>
+    
+      </div>
 
 
       

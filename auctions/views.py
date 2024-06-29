@@ -103,6 +103,8 @@ def listing_page(request, pk):
 
     is_watching = False
 
+    winner = listing.winner if listing.active == False else None
+
     if request.user.is_authenticated:
 
         is_watching = Watchlist.objects.filter(user=request.user, listing=listing).exists()
@@ -117,23 +119,36 @@ def listing_page(request, pk):
 
         "is_watching": is_watching,
 
-        "latest_bid": latest_bid
+        "latest_bid": latest_bid,
+
+        "winner" : winner,
 
     })
 
 @login_required
 
-def add_comment(request, listing_id):
-
+def add_comment(request, pk):
+    
+    listing = AuctionListing.objects.get(pk=pk)
     if request.method == 'POST':
-
+      
         comment = request.POST['comment']
 
-        usercomment = Comment(comment=comment, listing=AuctionListing.objects.get(pk=listing_id), user=request.user)
+        if comment:
 
-        usercomment.save()
+            usercomment = Comment(comment=comment, listing=listing, user=request.user)
 
-        return redirect('listing_page', listing_id=listing_id)
+            usercomment.save()
+
+            print("Comment saved successfully")
+
+            return redirect('listing_page',pk=pk)
+            
+        else:
+
+            print("Comment field is empty")
+
+            return redirect('listing_page',pk=pk)
 
     else:
 
@@ -199,6 +214,12 @@ def close_auction(request, pk):
     if listing.created_by == request.user:
 
         listing.active = False
+
+        highest_bid = Bid.objects.filter(listing=listing).latest('created_at')
+
+        if highest_bid:
+
+            listing.winner = highest_bid.created_by
 
         listing.save()
 
