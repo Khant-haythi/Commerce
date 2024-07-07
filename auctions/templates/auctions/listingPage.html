@@ -18,15 +18,17 @@
 
     <h3 class="my-3">{{ listing.title }}</h3>
 
-    {% if user.is_authenticated  %}
+    {% if user.is_authenticated and user != listing.created_by %}
 
-          <!-- user is a watcher -->
+      {% if is_watching %}
 
-      <a href="{% url 'remove_from_watchlist' listing.pk %}" class="btn btn-warning">Remove from Watchlist</a>
+        <a href="{% url 'remove_from_watchlist' listing.pk %}" class="btn btn-warning">Remove from Watchlist</a>
 
-    {% else %}
+      {% else %}
 
-      <a href="{% url 'add_to_watchlist' listing.pk %}" class="btn btn-warning">Add to Watchlist</a>
+        <a href="{% url 'add_to_watchlist' listing.pk %}" class="btn btn-warning">Add to Watchlist</a>
+
+      {% endif %}
 
     {% endif %}
         </br> 
@@ -92,9 +94,11 @@
 
       {% if listing.created_by == user %}
 
+        {% if listing.active %}
 
-        <a href="{% url 'close_auction' listing.pk %}" class="btn btn-danger">Close Auction</a>
+          <a href="{% url 'close_auction' listing.pk %}" class="btn btn-danger">Close Auction</a>
   
+        {% endif %}
   
       {% endif %}
   

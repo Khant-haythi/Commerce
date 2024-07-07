@@ -224,3 +224,20 @@ def close_auction(request, pk):
         listing.save()
 
         return redirect(index)
+    
+
+@login_required
+def watchlist(request):
+
+    watchlist_items = Watchlist.objects.filter(user=request.user)
+
+    listings = [item.listing for item in watchlist_items]
+    #listings = []
+
+    #for item in watchlist_items:
+    #listings.append(item.listing)
+    return render(request, "auctions/watchlist.html", {
+
+        "listings": listings
+
+    })
