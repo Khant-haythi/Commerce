@@ -79,8 +79,6 @@ def create_list(request):
         listing = AuctionListing(title=title, description=description, starting_bid=starting_bid, image_url=image_url, category=category
                                  ,created_by=request.user)
         listing.save()
-
-        
         return render(request, 'auctions/createList.html')
 
     else:
@@ -125,7 +123,6 @@ def listing_page(request, pk):
     })
 
 @login_required
-
 def add_comment(request, pk):
     
     listing = AuctionListing.objects.get(pk=pk)
@@ -154,7 +151,6 @@ def add_comment(request, pk):
         return render(request, 'auctions/listingPage.html')
 
 @login_required
-
 def add_to_watchlist(request, pk):
 
     listing = AuctionListing.objects.get(pk=pk)
@@ -165,7 +161,6 @@ def add_to_watchlist(request, pk):
 
 
 @login_required
-
 def remove_from_watchlist(request, pk):
 
     listing = AuctionListing.objects.get(pk=pk)
@@ -205,7 +200,6 @@ def place_bid(request, pk):
         return render(request, "auctions/listingPage.html", {"listing": listing, "latest_bid": latest_bid})
     
 @login_required
-
 def close_auction(request, pk):
 
     listing = AuctionListing.objects.get(pk=pk)
