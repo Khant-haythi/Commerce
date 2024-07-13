@@ -9,7 +9,7 @@ class Category(models.Model):
 
     name = models.CharField(max_length=64)
 
-    def _str_ (self):
+    def __str__ (self):
         return self.name
 
 class AuctionListing(models.Model):
@@ -24,15 +24,22 @@ class AuctionListing(models.Model):
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
     winner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True,related_name="winner")
 
+    def __str__(self):
+
+        return f"{self.title} on {self.category.name}" 
+    
+
+
 class Bid(models.Model):
 
     bid_amount = models.DecimalField(max_digits=10, decimal_places=2)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     listing = models.ForeignKey(AuctionListing, on_delete=models.CASCADE)
     created_at = models.DateTimeField()
+
     def __str__(self):
 
-        return f"{self.created_by.username} -> {self.bid_amount}"
+        return f"{self.created_by.username} bid {self.bid_amount} on {self.listing.title}"
     
 class Comment(models.Model):
 

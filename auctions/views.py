@@ -68,8 +68,7 @@ def register(request):
 def create_list(request):
 
     categories = Category.objects.all()
-    if request.method == "POST":
-        #print(request.POST) 
+    if request.method == "POST": 
         title = request.POST ['title']
         description = request.POST.get('description')
         starting_bid = request.POST['starting_bid']
